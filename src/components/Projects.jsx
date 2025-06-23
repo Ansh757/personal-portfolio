@@ -15,7 +15,7 @@ const Project = (props) => {
     >
       <div className="flex flex-col sm:-mx-4 sm:flex-row">
         <img
-          className="flex-shrink-0 object-cover w-24 h-24 rounded-full sm:mx-4 ring-4 ring-gray-300"
+          className="flex-shrink-0 object-contain bg-white w-24 h-24 rounded-full sm:mx-4 ring-4 ring-gray-300"
           src={props.image}
           alt=""
         />

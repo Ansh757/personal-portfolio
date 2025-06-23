@@ -12,10 +12,10 @@ import {
   placeicon,
   recruitment,
   huntly,
-  oracle,
+  uoft,
   comicify_ai,
   greentrust,
-  averlon,
+  rogers,
   devfolio,
   pba,
   ethglobal,
@@ -83,9 +83,11 @@ import { FaGolang } from "react-icons/fa6";
 
 import { DiCss3, DiJava, DiMsqlServer, DiRuby } from "react-icons/di";
 
-export const resumeLink = "";
-export const callToAction = "https://www.linkedin.com/in/<your-linkedin-id>/";
-export const repoLink = "https://github.com/mittal-parth/personal-portfolio";
+export const resumeLink =
+  "https://drive.google.com/file/d/1scrgYHd-LtrxbKS-x5r-qKijoOxsT1h9/view?usp=sharing";
+export const repoLink = "https://github.com/Ansh757/personal-portfolio";
+
+export const callToAction = "https://www.linkedin.com/in/anshmalhotra";
 
 export const navLinks = [
   {
@@ -97,17 +99,13 @@ export const navLinks = [
     title: "Education",
   },
   {
-    id: "achievements",
-    title: "Achievements",
-  },
-  {
     id: "projects",
     title: "Projects",
   },
-  {
-    id: "openSource",
-    title: "Open Source",
-  },
+  // {
+  //   id: "openSource",
+  //   title: "Open Source",
+  // },
   {
     id: "extraCurricular",
     title: "Extra Curricular",
@@ -132,21 +130,21 @@ export const educationList = [
 ];
 
 // Add your past achievements here for example - rankings in hackathons/events
-export const achievements = [
-  {
-    id: "a-1",
-    icon: FaRegImage,
-    event: "",
-    position: "",
-    content1: "",
-    content2: "",
-    content3: "",
-    article: "",
-    project: "",
-    youtube: "",
-    github: "",
-  },
-];
+// export const achievements = [
+//   {
+//     id: "a-1",
+//     icon: FaRegImage,
+//     event: "",
+//     position: "",
+//     content1: "",
+//     content2: "",
+//     content3: "",
+//     article: "",
+//     project: "",
+//     youtube: "",
+//     github: "",
+//   },
+// ];
 
 // Add your software developments skills here for example - programming languages, frameworks etc.
 export const skills = [
@@ -306,27 +304,17 @@ export const socialMedia = [
   {
     id: "social-media-1",
     icon: AiFillLinkedin,
-    link: "https://www.linkedin.com/in/<your-linkedin-id>/",
+    link: "https://www.linkedin.com/in/anshmalhotra/",
   },
   {
     id: "social-media-2",
     icon: AiFillGithub,
-    link: "https://www.github.com/<your-github-id>/",
+    link: "https://www.github.com/Ansh757/",
   },
   {
     id: "social-media-3",
     icon: AiFillMail,
-    link: "mailto:<your-email-id>",
-  },
-  {
-    id: "social-media-4",
-    icon: AiOutlineTwitter,
-    link: "https://www.twitter.com/<your-twitter-id>/",
-  },
-  {
-    id: "social-media-5",
-    icon: AiFillInstagram,
-    link: "https://www.instagram.com/<your-instagram-id>/",
+    link: "mailto:anshmalhotra2511@gmail.com",
   },
 ];
 
@@ -338,12 +326,12 @@ export const aboutMe = {
   intro: "",
 };
 
-// The maximum number of PRs to be displayed in the Open Source Contributions section.
-export const itemsToFetch = 20;
+// // The maximum number of PRs to be displayed in the Open Source Contributions section.
+// export const itemsToFetch = 20;
 
-// Add names of GitHub repos you'd like to display open source contributions from in the 'org/repo' format.
-export const includedRepos = [
-  "publiclab/plots2",
-  "zulip/zulip",
-  "paritytech/polkadot-sdk",
-];
+// // Add names of GitHub repos you'd like to display open source contributions from in the 'org/repo' format.
+// export const includedRepos = [
+//   "publiclab/plots2",
+//   "zulip/zulip",
+//   "paritytech/polkadot-sdk",
+// ];

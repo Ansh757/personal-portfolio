@@ -1,5 +1,5 @@
 import axios from "axios";
-import { aboutMe, itemsToFetch, includedRepos } from "../constants";
+import { aboutMe } from "../constants";
 
 export const scrollToSection = (id) => {
   const element = document.getElementById(id);
@@ -81,7 +81,6 @@ export async function fetchContributions() {
     // Use the Netlify function to fetch contributions
     // to avoid exposing the Github token into the client side build output
     const response = await axios.post('/.netlify/functions/fetchContributions', {
-      repos: includedRepos,
       username: aboutMe.githubUsername
     });
 

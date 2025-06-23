@@ -1,9 +1,9 @@
-import parthmittal from "./parth.svg";
+import anshmalhotra from "./anshm.svg";
 import profilePic from "./profile-pic.jpg";
 import menu from "./menu.svg";
 import close from "./close.svg";
 import arrowUp from "./arrow-up.svg";
-import nitk from "./nitk.png";
+import uoftlogo from "./uoftLogo.jpg";
 import cluboard from "./cluboard.png";
 import cash_flow from "./cash_flow.jpg";
 import ecell from "./ecell.png";
@@ -14,12 +14,11 @@ import portfolio from "./portfolio.jpg";
 import cdc from "./cdc.png";
 import chargeswap from "./chargeswap.png";
 import placeicon from "./place-icon.svg";
-import recruitment from "./recruitment.png";
 import huntly from "./huntly.png";
-import oracle from "./oracle.jpg";
+import uoft from "./uoft.png";
 import comicify_ai from "./comicify-ai.png";
-import greentrust from "./green_trust.png";
-import averlon from "./averlon.jpg";
+import chess from "./chess.png";
+import rogers from "./rogers.jpeg";
 import devfolio from "./devfolio.png";
 import pba from "./pba_logo.jpeg";
 import ethglobal from "./ethglobal.png";
@@ -32,15 +31,17 @@ import ethforall from "./ethforall.png";
 import ethindia from "./ethindia.png";
 import placeholder from "./placeholder.svg";
 import globalAi from "./global-ai.jpeg";
-import khoj from "./khoj.jpg";
-import kosh from "./kosh.png";
-import polkadot_dev_cli from "./polkadot-dev-cli.png";
+import ontparks from "./ontparks.png";
+import recsyslogo from "./recommendationsyslogo.png";
+import wb from "./wb.png";
+import music from "./music.jpg";
+import terminal from "./terminal.png"
 
 export {
   menu,
   close,
   arrowUp,
-  nitk,
+  uoftlogo,
   cluboard,
   cash_flow,
   gdsc,
@@ -49,16 +50,15 @@ export {
   genesis,
   portfolio,
   cdc,
-  parthmittal,
+  anshmalhotra,
   profilePic,
   chargeswap,
   placeicon,
-  recruitment,
   huntly,
-  oracle,
+  uoft,
   comicify_ai,
-  greentrust,
-  averlon,
+  chess,
+  rogers,
   devfolio,
   pba,
   ethglobal,
@@ -70,8 +70,10 @@ export {
   ethforall,
   ethindia,
   globalAi,
-  khoj,
-  kosh,
-  polkadot_dev_cli,
-  placeholder
+  ontparks,
+  recsyslogo,
+  placeholder,
+  wb,
+  music,
+  terminal
 };

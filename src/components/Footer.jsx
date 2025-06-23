@@ -16,7 +16,7 @@ const Footer = () => (
           {aboutMe.name}
         </h2>
         <p
-          className={`font-poppins font-normal text-dimWhite text-[16px] leading-[30.8px] max-w-[470px] mt-5`}
+          className={`font-poppins font-normal text-dimWhite text-[16px] leading-[30.8px] max-w-[600px] mt-5`}
         >
         {aboutMe.tagLine}
         </p>
@@ -49,17 +49,20 @@ const Footer = () => (
         </div>
       </div>
 
-      <div className="md:ml-auto mt-10 md:mt-0">
+      <div className="md:ml-auto md:mt-0">
         <img
           src={profilePic}
-          alt="Parth Mittal"
-          className="w-[200px] h-[200px] border-2 border-teal-200 relative z-[5] rounded-full"
+          alt="Ansh Malhotra"
+          className="w-[250px] h-[250px] border-2 border-teal-200 rounded-full object-cover"
+          width={250}
+          height={250}
         />
       </div>
     </div>
     <div className="text-center font-poppins font-normal text-dimWhite text-xs sm:text-sm pb-4">
       <p>
-        Made with 💙 by Parth Mittal & the Open Source Community
+        Edited by Ansh Malhotra.
+        Template from Parth Mittal & Open Source Community.
       </p>
     </div>
   </footer>

@@ -10,7 +10,7 @@ def get_default_paths():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     return {
         'input_dir': os.path.join(script_dir, "linkedin-export"),
-        'output': os.path.join(script_dir, "..", "src", "constants", "index-example.js")
+        'output': os.path.join(script_dir, "..", "src", "constants", "index.js")
     }
 
 
@@ -30,7 +30,7 @@ def format_date(date_str):
         return ""
     try:
         date = parse_date(date_str)
-        return date.strftime('%b %Y')
+        return date.strftime('%b %Y') if date else date_str
     except (ValueError, TypeError):
         return date_str
 
@@ -62,22 +62,26 @@ def convert_education_csv_to_js(input_dir=None, output_file=None):
                 degree_name = row.get("Degree Name", "").strip()
                 activities = row.get("Activities", "").strip()
 
+                # Format dates
+                formatted_start = format_date(start_date)
+                formatted_end = format_date(end_date)
+                
                 # Format duration
                 duration = ""
-                if start_date and end_date:
-                    duration = f"{start_date} - {end_date}"
-                elif start_date:
-                    duration = f"{start_date} - Present"
+                if formatted_start and formatted_end:
+                    duration = f"{formatted_start} - {formatted_end}"
+                elif formatted_start:
+                    duration = f"{formatted_start} - Present"
 
                 # Create entry
                 entry = {
                     "id": f"education-{i + 1}",
-                    "icon": "FaRegImage",
+                    "icon": "FaGraduationCap",
                     "title": school_name,
                     "degree": degree_name,
                     "duration": duration,
-                    "content1": notes,
-                    "content2": activities,
+                    "content1": notes.replace('"', '\\"'),
+                    "content2": activities.replace('"', '\\"'),
                 }
 
                 education_entries.append(entry)
@@ -102,38 +106,8 @@ def convert_education_csv_to_js(input_dir=None, output_file=None):
 
     js_code = "export const educationList = [\n" + ",\n".join(js_entries) + "\n];\n"
 
-    # Check if output file exists and contains relevant section
-    try:
-        content = ""
-        if os.path.exists(output_file):
-            with open(output_file, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Check if educationList is already defined
-            if "export const educationList" in content:
-                # Replace existing educationList
-                pattern = r"export const educationList = \[[\s\S]*?\];"
-                content = re.sub(pattern, js_code.strip(), content)
-            else:
-                # Append educationList to the end
-                content += "\n\n" + js_code
-        else:
-            # Create new file with educationList
-            content = js_code
-
-            # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Write updated content to file
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(content)
-
-        print(f"Successfully updated {output_file} with education data.")
-        return True
-
-    except Exception as e:
-        print(f"Error updating JS file: {e}")
-        return False
+    # Update output file
+    return update_js_file(output_file, "educationList", js_code)
 
 
 def convert_projects_csv_to_js(input_dir=None, output_file=None):
@@ -159,8 +133,6 @@ def convert_projects_csv_to_js(input_dir=None, output_file=None):
                 title = row.get("Title", "").strip()
                 description = row.get("Description", "").strip()
                 url = row.get("Url", "").strip()
-                # started_on = row.get("Started On", "").strip()
-                # finished_on = row.get("Finished On", "").strip()
 
                 # Create entry
                 entry = {
@@ -168,13 +140,13 @@ def convert_projects_csv_to_js(input_dir=None, output_file=None):
                     "title": title,
                     "github": url,
                     "link": url,
-                    "image": "placeholder",
-                    "content": description,
+                    "image": "ProjectPlaceholder",
+                    "content": description.replace('"', '\\"'),
                     "stack": [
                         {
-                            "id": "icon-1",
-                            "icon": "FaRegImage",
-                            "name": "Placeholder",
+                            "id": f"tech-{i+1}-1",
+                            "icon": "FaCode",
+                            "name": "Technology Placeholder",
                         }
                     ],
                 }
@@ -191,61 +163,42 @@ def convert_projects_csv_to_js(input_dir=None, output_file=None):
         # Format stack items
         stack_items = []
         for stack in entry["stack"]:
-            stack_item = f"""      {{
-        id: "{stack["id"]}",
-        icon: {stack["icon"]},
-        name: "{stack["name"]}",
-      }}"""
+            stack_item = (
+                "      {{\n"
+                "        id: \"{}\",\n"
+                "        icon: {},\n"
+                "        name: \"{}\",\n"
+                "      }}"
+            ).format(stack['id'], stack['icon'], stack['name'])
             stack_items.append(stack_item)
 
-        js_entry = f"""  {{
-    id: "{entry["id"]}",
-    title: "{entry["title"]}",
-    github: "{entry["github"]}",
-    link: "{entry["link"]}",
-    image: {entry["image"]},
-    content:
-      "{entry["content"]}",
-    stack: [
-{",\n".join(stack_items)}
-    ],
-  }}"""
+        # Build project entry with explicit newline handling
+        js_entry = (
+            "  {{\n"
+            "    id: \"{}\",\n"
+            "    title: \"{}\",\n"
+            "    github: \"{}\",\n"
+            "    link: \"{}\",\n"
+            "    image: {},\n"
+            "    content: \"{}\",\n"
+            "    stack: [\n"
+            "{}\n"
+            "    ],\n"
+            "  }}"
+        ).format(
+            entry['id'],
+            entry['title'].replace('"', '\\"'),
+            entry['github'],
+            entry['link'],
+            entry['image'],
+            entry['content'].replace('\n', ' ').replace('"', '\\"'),
+            ",\n".join(stack_items)
+        )
         js_entries.append(js_entry)
 
     js_code = "export const projects = [\n" + ",\n".join(js_entries) + "\n];\n"
-
-    # Check if output file exists and contains relevant section
-    try:
-        content = ""
-        if os.path.exists(output_file):
-            with open(output_file, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Check if projects is already defined
-            if "export const projects" in content:
-                # Replace existing projects
-                pattern = r"export const projects = \[[\s\S]*?\];"
-                content = re.sub(pattern, js_code.strip(), content)
-            else:
-                # Append projects to the end
-                content += "\n\n" + js_code
-        else:
-            # Create new file with projects
-            content = js_code
-
-            # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Write updated content to file
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(content)
-
-        print(f"Successfully updated {output_file} with projects data.")
-        return True
-
-    except Exception as e:
-        print(f"Error updating JS file: {e}")
-        return False
+    # Update output file
+    return update_js_file(output_file, "projects", js_code)
 
 
 def convert_volunteering_csv_to_js(input_dir=None, output_file=None):
@@ -274,27 +227,28 @@ def convert_volunteering_csv_to_js(input_dir=None, output_file=None):
                 finished_on = row.get("Finished On", "").strip()
                 description = row.get("Description", "").strip()
 
+                # Format dates
+                formatted_start = format_date(started_on)
+                formatted_end = format_date(finished_on)
+                
                 # Format duration
                 duration = ""
-                if started_on and finished_on:
-                    duration = f"{started_on} - {finished_on}"
-                elif started_on:
-                    duration = f"{started_on} - Present"
+                if formatted_start and formatted_end:
+                    duration = f"{formatted_start} - {formatted_end}"
+                elif formatted_start:
+                    duration = f"{formatted_start} - Present"
 
                 # Split description by periods to create content items
                 content_items = []
                 if description:
-                    # Split by period but keep the period in the text
-                    sentences = [
-                        s.strip() + "." for s in description.split(".") if s.strip()
-                    ]
-                    # Remove the last period if the original text didn't end with a period
-                    if not description.endswith(".") and sentences:
-                        sentences[-1] = sentences[-1][:-1]
-
+                    sentences = description.split('.')
                     for sentence in sentences:
-                        if sentence.strip():
-                            content_items.append({"text": sentence.strip(), "link": ""})
+                        cleaned = sentence.strip()
+                        if cleaned:
+                            content_items.append({
+                                "text": cleaned + ("" if cleaned.endswith('.') else "."),
+                                "link": ""
+                            })
 
                 # If no content items were created, add an empty one
                 if not content_items:
@@ -307,7 +261,7 @@ def convert_volunteering_csv_to_js(input_dir=None, output_file=None):
                     "title": role,
                     "duration": duration,
                     "content": content_items,
-                    "logo": "placeholder",
+                    "logo": "OrganizationLogo",
                 }
 
                 volunteering_entries.append(entry)
@@ -323,15 +277,15 @@ def convert_volunteering_csv_to_js(input_dir=None, output_file=None):
         content_items = []
         for content in entry["content"]:
             content_item = f"""      {{
-        text: "{content["text"]}",
-        link: "{content["link"]}",
+        text: "{content['text'].replace('"', '\\\\"')}",
+        link: "{content['link']}",
       }}"""
             content_items.append(content_item)
 
         js_entry = f"""  {{
     id: {entry["id"]},
-    organisation: "{entry["organisation"]}",
-    title: "{entry["title"]}",
+    organisation: "{entry["organisation"].replace('"', '\\\\"')}",
+    title: "{entry["title"].replace('"', '\\\\"')}",
     duration: "{entry["duration"]}",
     content: [
 {",\n".join(content_items)}
@@ -342,159 +296,93 @@ def convert_volunteering_csv_to_js(input_dir=None, output_file=None):
 
     js_code = "export const extraCurricular = [\n" + ",\n".join(js_entries) + "\n];\n"
 
-    # Check if output file exists and contains relevant section
-    try:
-        content = ""
-        if os.path.exists(output_file):
-            with open(output_file, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Check if extraCurricular is already defined
-            if "export const extraCurricular" in content:
-                # Replace existing extraCurricular
-                pattern = r"export const extraCurricular = \[[\s\S]*?\];"
-                content = re.sub(pattern, js_code.strip(), content)
-            else:
-                # Append extraCurricular to the end
-                content += "\n\n" + js_code
-        else:
-            # Create new file with extraCurricular
-            content = js_code
-
-            # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Write updated content to file
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(content)
-
-        print(f"Successfully updated {output_file} with volunteering data.")
-        return True
-
-    except Exception as e:
-        print(f"Error updating JS file: {e}")
-        return False
+    # Update output file
+    return update_js_file(output_file, "extraCurricular", js_code)
 
 
-def convert_honors_csv_to_js(input_dir=None, output_file=None):
-    # Define paths
-    if input_dir is None or output_file is None:
-        paths = get_default_paths()
-        input_dir = input_dir or paths['input_dir']
-        output_file = output_file or paths['output']
+# def convert_honors_csv_to_js(input_dir=None, output_file=None):
+#     # Define paths
+#     if input_dir is None or output_file is None:
+#         paths = get_default_paths()
+#         input_dir = input_dir or paths['input_dir']
+#         output_file = output_file or paths['output']
 
-    input_file = os.path.join(input_dir, "Honors.csv")
-    # Check if input file exists
-    if not os.path.exists(input_file):
-        print(f"Error: Input file {input_file} not found.")
-        return False
+#     input_file = os.path.join(input_dir, "Honors.csv")
+#     # Check if input file exists
+#     if not os.path.exists(input_file):
+#         print(f"Error: Input file {input_file} not found.")
+#         return False
 
-    # Read honors data from CSV
-    honors_entries = []
-    try:
-        with open(input_file, "r", encoding="utf-8") as csvfile:
-            reader = csv.DictReader(csvfile)
-            for i, row in enumerate(reader):
-                # Extract data
-                title = row.get("Title", "").strip()
-                description = row.get("Description", "").strip()
-                issued_on = row.get("Issued On", "").strip()
+#     # Read honors data from CSV
+#     honors_entries = []
+#     try:
+#         with open(input_file, "r", encoding="utf-8") as csvfile:
+#             reader = csv.DictReader(csvfile)
+#             for i, row in enumerate(reader):
+#                 # Extract data
+#                 title = row.get("Title", "").strip()
+#                 description = row.get("Description", "").strip()
+#                 issued_on = row.get("Issued On", "").strip()
 
-                # Split description by periods for content fields
-                if description:
-                    # Split by period but keep the period in the text
-                    sentences = [
-                        s.strip() + "." for s in description.split(".") if s.strip()
-                    ]
-                    # Remove the last period if the original text didn't end with a period
-                    if not description.endswith(".") and sentences:
-                        sentences[-1] = sentences[-1][:-1]
+#                 # Format date
+#                 formatted_date = format_date(issued_on) or issued_on
 
-                    # First 2 sentences go to content1 and content2
-                    content1 = sentences[0] if len(sentences) > 0 else ""
-                    content2 = sentences[1] if len(sentences) > 1 else ""
-                    # All remaining sentences go to content3
-                    content3 = ""
-                    if len(sentences) > 2:
-                        content3 = " ".join(sentences[2:])
-                else:
-                    content1 = ""
-                    content2 = ""
-                    content3 = ""
+#                 # Split description
+#                 content1 = ""
+#                 content2 = ""
+#                 content3 = ""
+#                 if description:
+#                     parts = description.split('.')
+#                     if len(parts) > 0:
+#                         content1 = parts[0].strip() + ('.' if parts[0].strip() else '')
+#                     if len(parts) > 1:
+#                         content2 = parts[1].strip() + ('.' if parts[1].strip() else '')
+#                     if len(parts) > 2:
+#                         content3 = '.'.join(parts[2:]).strip() + ('.' if parts[2].strip() else '')
 
-                # Create entry
-                entry = {
-                    "id": f"a-{i + 1}",
-                    "icon": "FaRegImage",
-                    "event": title,
-                    "position": issued_on,
-                    "content1": content1,
-                    "content2": content2,
-                    "content3": content3,
-                    "article": "",
-                    "project": "",
-                    "youtube": "",
-                    "github": "",
-                }
+#                 # Create entry
+#                 entry = {
+#                     "id": f"a-{i + 1}",
+#                     "icon": "FaTrophy",
+#                     "event": title,
+#                     "position": formatted_date,
+#                     "content1": content1.replace('"', '\\"'),
+#                     "content2": content2.replace('"', '\\"'),
+#                     "content3": content3.replace('"', '\\"'),
+#                     "article": "",
+#                     "project": "",
+#                     "youtube": "",
+#                     "github": "",
+#                 }
 
-                honors_entries.append(entry)
+#                 honors_entries.append(entry)
 
-    except Exception as e:
-        print(f"Error reading CSV file: {e}")
-        return False
+#     except Exception as e:
+#         print(f"Error reading CSV file: {e}")
+#         return False
 
-    # Generate JS code for achievements list
-    js_entries = []
-    for entry in honors_entries:
-        js_entry = f"""  {{
-    id: "{entry["id"]}",
-    icon: {entry["icon"]},
-    event: "{entry["event"]}",
-    position: "{entry["position"]}",
-    content1: "{entry["content1"]}",
-    content2: "{entry["content2"]}",
-    content3: "{entry["content3"]}",
-    article: "{entry["article"]}",
-    project: "{entry["project"]}",
-    youtube: "{entry["youtube"]}",
-    github: "{entry["github"]}",
-  }}"""
-        js_entries.append(js_entry)
+#     # Generate JS code for achievements list
+#     js_entries = []
+#     for entry in honors_entries:
+#         js_entry = f"""  {{
+#     id: "{entry["id"]}",
+#     icon: {entry["icon"]},
+#     event: "{entry["event"]}",
+#     position: "{entry["position"]}",
+#     content1: "{entry["content1"]}",
+#     content2: "{entry["content2"]}",
+#     content3: "{entry["content3"]}",
+#     article: "{entry["article"]}",
+#     project: "{entry["project"]}",
+#     youtube: "{entry["youtube"]}",
+#     github: "{entry["github"]}",
+#   }}"""
+#         js_entries.append(js_entry)
 
-    js_code = "export const achievements = [\n" + ",\n".join(js_entries) + "\n];\n"
+#     js_code = "export const achievements = [\n" + ",\n".join(js_entries) + "\n];\n"
 
-    # Check if output file exists and contains relevant section
-    try:
-        content = ""
-        if os.path.exists(output_file):
-            with open(output_file, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Check if achievements is already defined
-            if "export const achievements" in content:
-                # Replace existing achievements
-                pattern = r"export const achievements = \[[\s\S]*?\];"
-                content = re.sub(pattern, js_code.strip(), content)
-            else:
-                # Append achievements to the end
-                content += "\n\n" + js_code
-        else:
-            # Create new file with achievements
-            content = js_code
-
-            # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Write updated content to file
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(content)
-
-        print(f"Successfully updated {output_file} with honors data.")
-        return True
-
-    except Exception as e:
-        print(f"Error updating JS file: {e}")
-        return False
+#     # Update output file
+#     return update_js_file(output_file, "achievements", js_code)
 
 
 def convert_positions_csv_to_js(input_dir=None, output_file=None):
@@ -538,7 +426,7 @@ def convert_positions_csv_to_js(input_dir=None, output_file=None):
         # Create organization entry
         org_entry = {
             "organisation": company_name,
-            "logo": "placeholder",
+            "logo": "CompanyLogo",
             "link": "",
             "positions": [],
         }
@@ -561,41 +449,42 @@ def convert_positions_csv_to_js(input_dir=None, output_file=None):
             finished_on = position.get("Finished On", "").strip()
             description = position.get("Description", "").strip()
 
+            # Format dates
+            formatted_start = format_date(started_on)
+            formatted_end = format_date(finished_on)
+            
             # Format duration
             duration = ""
-            if started_on and finished_on:
-                duration = f"{format_date(started_on)} - {format_date(finished_on)}"
-            elif started_on:
-                duration = f"{format_date(started_on)} - Present"
+            if formatted_start and formatted_end:
+                duration = f"{formatted_start} - {formatted_end}"
+            elif formatted_start:
+                duration = f"{formatted_start} - Present"
 
             # Split description into content items
             content_items = []
+            if description:
+                # Split by bullet points or periods
+                if '•' in description:
+                    items = description.split('•')
+                    for item in items:
+                        cleaned = item.strip()
+                        if cleaned:
+                            content_items.append({
+                                "text": cleaned,
+                                "link": ""
+                            })
+                else:
+                    sentences = description.split('.')
+                    for sentence in sentences:
+                        cleaned = sentence.strip()
+                        if cleaned:
+                            content_items.append({
+                                "text": cleaned + ("" if cleaned.endswith('.') else "."),
+                                "link": ""
+                            })
 
-            # Check if description contains bullet points
-            if "•" in description:
-                # Split by bullet points
-                bullet_items = [
-                    item.strip() for item in description.split("•") if item.strip()
-                ]
-                for item in bullet_items:
-                    content_items.append({"text": item, "link": ""})
-            else:
-                # Split by periods
-                sentences = [
-                    s.strip() + "." for s in description.split(".") if s.strip()
-                ]
-                # Remove the last period if the original text didn't end with a period
-                if not description.endswith(".") and sentences:
-                    sentences[-1] = sentences[-1][:-1]
-
-                for sentence in sentences:
-                    if sentence.strip():
-                        content_items.append({"text": sentence.strip(), "link": ""})
-
-            # If no content items were created, add a default one with the description
-            if not content_items and description:
-                content_items.append({"text": description, "link": ""})
-            elif not content_items:
+            # If no content items were created, add a default one
+            if not content_items:
                 content_items.append({"text": "", "link": ""})
 
             # Create position entry
@@ -619,14 +508,14 @@ def convert_positions_csv_to_js(input_dir=None, output_file=None):
             content_items = []
             for content in position["content"]:
                 content_item = f"""          {{
-            text: "{content["text"]}",
-            link: "{content["link"]}",
+            text: "{content['text'].replace('"', '\\\\"')}",
+            link: "{content['link']}",
           }}"""
                 content_items.append(content_item)
 
             position_item = f"""      {{
-        title: "{position["title"]}",
-        duration: "{position["duration"]}",
+        title: "{position['title']}",
+        duration: "{position['duration']}",
         content: [
 {",\n".join(content_items)}
         ],
@@ -645,38 +534,8 @@ def convert_positions_csv_to_js(input_dir=None, output_file=None):
 
     js_code = "export const experiences = [\n" + ",\n".join(js_entries) + "\n];\n"
 
-    # Check if output file exists and contains relevant section
-    try:
-        content = ""
-        if os.path.exists(output_file):
-            with open(output_file, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Check if experiences is already defined
-            if "export const experiences" in content:
-                # Replace existing experiences
-                pattern = r"export const experiences = \[[\s\S]*?\];"
-                content = re.sub(pattern, js_code.strip(), content)
-            else:
-                # Append experiences to the end
-                content += "\n\n" + js_code
-        else:
-            # Create new file with experiences
-            content = js_code
-
-            # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Write updated content to file
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(content)
-
-        print(f"Successfully updated {output_file} with positions data.")
-        return True
-
-    except Exception as e:
-        print(f"Error updating JS file: {e}")
-        return False
+    # Update output file
+    return update_js_file(output_file, "experiences", js_code)
 
 
 def convert_profile_csv_to_js(input_dir=None, output_file=None):
@@ -694,7 +553,7 @@ def convert_profile_csv_to_js(input_dir=None, output_file=None):
 
     # Default values
     name = ""
-    githubUsername = ""
+    githubUsername = "your-github"
     tagLine = ""
     intro = "This is a placeholder intro"
 
@@ -712,7 +571,7 @@ def convert_profile_csv_to_js(input_dir=None, output_file=None):
                 name = f"{first_name} {last_name}".strip()
 
                 # Use headline as tagLine
-                tagLine = headline
+                tagLine = headline.replace('"', '\\"')
 
                 # Only process the first row
                 break
@@ -724,43 +583,13 @@ def convert_profile_csv_to_js(input_dir=None, output_file=None):
     # Generate JS code for aboutMe object
     js_code = f"""export const aboutMe = {{
     name: "{name}",
-    githubUsername: '{githubUsername}',
+    githubUsername: "{githubUsername}",
     tagLine: "{tagLine}",
-    intro: "{intro}"
+    intro: "{intro.replace('"', '\\\\"')}"
 }};"""
 
-    # Check if output file exists and contains relevant section
-    try:
-        content = ""
-        if os.path.exists(output_file):
-            with open(output_file, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Check if aboutMe is already defined
-            if "export const aboutMe" in content:
-                # Replace existing aboutMe
-                pattern = r"export const aboutMe = \{[\s\S]*?\};"
-                content = re.sub(pattern, js_code.strip(), content)
-            else:
-                # Append aboutMe to the end
-                content += "\n\n" + js_code
-        else:
-            # Create new file with aboutMe
-            content = js_code
-
-            # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
-
-        # Write updated content to file
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(content)
-
-        print(f"Successfully updated {output_file} with profile data.")
-        return True
-
-    except Exception as e:
-        print(f"Error updating JS file: {e}")
-        return False
+    # Update output file
+    return update_js_file(output_file, "aboutMe", js_code)
 
 
 def convert_skills_csv_to_js(input_dir=None, output_file=None):
@@ -776,7 +605,11 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
         print(f"Error: Input file {input_file} not found.")
         return False
 
-    common_frameworks = ["flask", "django", "react", "angular", "vue", "laravel", "spring", "bootstrap", "tailwind css", "tailwindcss", "express", "dotnet", "tensorflow", "pytorch", "rubyonrails", "rails", "bootstrap", "jquery", "nodejs", "nextjs", "nuxtjs", "angularjs", "vuejs"]
+    common_frameworks = ["flask", "django", "react", "angular", "vue", "laravel", 
+                         "spring", "bootstrap", "tailwind css", "tailwindcss", 
+                         "express", "dotnet", "tensorflow", "pytorch", 
+                         "rubyonrails", "rails", "jquery", "nodejs", "nextjs", 
+                         "nuxtjs", "angularjs", "vuejs"]
 
     # Initialize categories
     programming_languages = []
@@ -797,9 +630,12 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
                 if not skill_name:
                     continue
 
+                # Normalize skill name for matching
+                normalized_name = skill_name.lower()
+                
                 # Check if it's a programming language
-                if "(Programming Language)" in skill_name:
-                    # Extract the language name without the "(Programming Language)" part
+                if "(Programming Language)" in normalized_name:
+                    # Extract the language name
                     language_name = skill_name.replace("(Programming Language)", "").strip()
                     # Generate icon name based on language
                     icon_name = f"Si{language_name.replace(' ', '')}"
@@ -812,11 +648,10 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
                     pl_count += 1
 
                 # Check for common frameworks keywords
-                elif any(keyword in skill_name.lower() for keyword in common_frameworks):
-                    # Use FaRegImage as a placeholder for framework icons
+                elif any(keyword in normalized_name for keyword in common_frameworks):
                     frameworks.append({
                         "id": f"f-{f_count}",
-                        "icon": f"Si{skill_name.replace(' ', '').capitalize()}",
+                        "icon": f"Si{skill_name.replace(' ', '')}",
                         "name": skill_name
                     })
                     f_count += 1
@@ -825,7 +660,7 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
                 else:
                     tools.append({
                         "id": f"t-{t_count}",
-                        "icon": "FaRegImage",
+                        "icon": "FaToolbox",
                         "name": skill_name
                     })
                     t_count += 1
@@ -854,7 +689,7 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
     # Add tools category if not empty
     if tools:
         categories.append({
-            "title": "Tools",
+            "title": "Tools & Platforms",
             "items": tools
         })
 
@@ -865,14 +700,14 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
         items_entries = []
         for item in category["items"]:
             item_entry = f"""      {{
-        id: "{item["id"]}",
-        icon: {item["icon"]},
-        name: "{item["name"]}",
+        id: "{item['id']}",
+        icon: {item['icon']},
+        name: "{item['name']}",
       }}"""
             items_entries.append(item_entry)
 
         js_entry = f"""  {{
-    title: "{category["title"]}",
+    title: "{category['title']}",
     items: [
 {",\n".join(items_entries)}
     ],
@@ -881,23 +716,28 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
 
     js_code = "export const skills = [\n" + ",\n".join(js_entries) + "\n];\n"
 
-    # Check if output file exists and contains relevant section
+    # Update output file
+    return update_js_file(output_file, "skills", js_code)
+
+
+def update_js_file(output_file, const_name, js_code):
+    """Update the JS file with the new constant definition"""
     try:
         content = ""
         if os.path.exists(output_file):
             with open(output_file, "r", encoding="utf-8") as f:
                 content = f.read()
 
-            # Check if skills is already defined
-            if "export const skills" in content:
-                # Replace existing skills
-                pattern = r"export const skills = \[[\s\S]*?\];"
+            # Check if constant is already defined
+            pattern = rf"export const {const_name} = \[[\s\S]*?\];"
+            if re.search(pattern, content):
+                # Replace existing constant
                 content = re.sub(pattern, js_code.strip(), content)
             else:
-                # Append skills to the end
+                # Append constant to the end
                 content += "\n\n" + js_code
         else:
-            # Create new file with skills
+            # Create new file with constant
             content = js_code
 
             # Create directory if it doesn't exist
@@ -907,7 +747,7 @@ def convert_skills_csv_to_js(input_dir=None, output_file=None):
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(content)
 
-        print(f"Successfully updated {output_file} with skills data.")
+        print(f"Successfully updated {output_file} with {const_name} data.")
         return True
 
     except Exception as e:
@@ -926,15 +766,26 @@ def main():
     
     # Get default paths
     paths = get_default_paths()
+    input_dir = args.input_dir or paths['input_dir']
+    output_file = args.output or paths['output']
     
     # Convert files with provided or default paths
-    convert_education_csv_to_js(args.input_dir or paths['input_dir'], args.output or paths['output'])
-    convert_projects_csv_to_js(args.input_dir or paths['input_dir'], args.output or paths['output'])
-    convert_volunteering_csv_to_js(args.input_dir or paths['input_dir'], args.output or paths['output'])
-    convert_honors_csv_to_js(args.input_dir or paths['input_dir'], args.output or paths['output'])
-    convert_positions_csv_to_js(args.input_dir or paths['input_dir'], args.output or paths['output'])
-    convert_profile_csv_to_js(args.input_dir or paths['input_dir'], args.output or paths['output'])
-    convert_skills_csv_to_js(args.input_dir or paths['input_dir'], args.output or paths['output'])
+    results = [
+        convert_profile_csv_to_js(input_dir, output_file),
+        convert_skills_csv_to_js(input_dir, output_file),
+        convert_education_csv_to_js(input_dir, output_file),
+        convert_positions_csv_to_js(input_dir, output_file),
+        convert_projects_csv_to_js(input_dir, output_file),
+        convert_volunteering_csv_to_js(input_dir, output_file),
+        convert_honors_csv_to_js(input_dir, output_file)
+    ]
+    
+    # Print summary
+    success_count = sum(1 for r in results if r)
+    print(f"\nProcess completed: {success_count}/7 conversions successful")
+    
+    if success_count < 7:
+        print("Warning: Some conversions failed. Check error messages above.")
 
 
 if __name__ == "__main__":
