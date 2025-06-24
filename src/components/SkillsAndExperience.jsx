@@ -186,7 +186,7 @@ const SkillsAndExperience = () => {
         </motion.div>
 
         {/* Experience */}
-        <motion.div className="flex flex-1 items-center justify-start flex-col">
+        <motion.div className="pt-48 flex flex-1 items-center justify-start flex-col gap-4">
           {experiences.map((exp, index) => (
             <ExperienceCard key={index} index={index} {...exp} />
           ))}
