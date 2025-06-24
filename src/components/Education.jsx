@@ -1,7 +1,7 @@
 import styles, { layout } from "../style";
 import { educationList } from "../constants";
 import Lottie from "react-lottie-player";
-import animationData from "../lotties/quiz-mode-teal-dark.json";
+import animationData from "../lotties/quiz-mode-gold.json";
 import { motion } from "framer-motion";
 
 // lottie config
