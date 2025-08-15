@@ -34,19 +34,19 @@ const Footer = () => (
           ))}
         </div>
 
-        <div className="grid grid-cols-2">
+        {/* <div className="grid grid-cols-2 white"> */}
           {/* styles is a prop */}
-          <a href={resumeLink} target="_blank">
-            <Button styles="mt-10 mr-3 inline-flex items-center justify-center" text="Resume" icon={AiFillGithub} />
-          </a>
-          <a href={repoLink} target="_blank">
-            <Button
-              styles="mt-10 inline-flex items-center justify-center"
-              text="Star"
-              icon={AiFillGithub}
-            />
-          </a>
-        </div>
+          {/* <a href={resumeLink} target="_blank"> */}
+            {/* <Button styles="mt-10 inline-flex items-center justify-center text-white" text="Resume" icon={AiFillGithub} /> */}
+          {/* </a> */}
+          {/* <a href={repoLink} target="_blank"> */}
+            {/* <Button */}
+              {/* // styles="mt-10 inline-flex items-center justify-center text-white" */}
+              {/* // text="Star" */}
+              {/* // icon={AiFillGithub} */}
+            {/* // /> */}
+          {/* </a> */}
+        {/* </div> */}
       </div>
 
       <div className="md:ml-auto md:mt-0">
@@ -61,8 +61,7 @@ const Footer = () => (
     </div>
     <div className="text-center font-poppins font-normal text-dimWhite text-xs sm:text-sm pb-4">
       <p>
-        Edited by Ansh Malhotra.
-        Template from Parth Mittal & Open Source Community.
+        Made by Ansh Malhotra.
       </p>
     </div>
   </footer>
