@@ -538,7 +538,7 @@ export const projects = [
     id: "project-3",
     title: "Wellbeing WebApp",
     github: "",
-    link: "https://wellbeing-49fed.web.app/",
+    link: "",
     image: wb,
     content:
       "A web-based mental health platform designed to support students through daily check-ins and personalized AI chatbot interactions. Features include email reminders, avatar customization, and motivational feedback. Made with a multidisciplinary team to promote engagement and well-being.",
