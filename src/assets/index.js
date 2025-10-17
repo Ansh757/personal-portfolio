@@ -36,6 +36,7 @@ import recsyslogo from "./recommendationsyslogo.png";
 import wb from "./wb.png";
 import music from "./music.jpg";
 import terminal from "./terminal.png"
+import football from "./football.png"
 
 export {
   menu,
@@ -73,6 +74,7 @@ export {
   ontparks,
   recsyslogo,
   placeholder,
+  football,
   wb,
   music,
   terminal

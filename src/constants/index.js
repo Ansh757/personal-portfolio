@@ -12,7 +12,8 @@ import {
   recsyslogo,
   wb,
   music,
-  terminal
+  terminal,
+  football,
 } from "../assets";
 
 import {
@@ -52,6 +53,10 @@ import {
   SiVercel,
   SiHtml5,
   SiFirebase,
+  SiDocker,
+  SiFastapi,
+  SiSqlite,
+  SiRailway,
 } from "react-icons/si";
 
 
@@ -490,48 +495,43 @@ export const projects = [
   },
   {
     id: "project-2",
-    title: "Coming Soon!",
-    github: "",
-    link: "",
-    image: "",
+    title: "NFL Predictor System",
+    github: "https://github.com/Ansh757/nfl-predictor",
+    link: "https://nfl-predictor-system-production.up.railway.app/",
+    image: football,
     content:
-      "Stay Tuned.",
+      "I developed an NFL prediction system that combines insights from four agents—Weather, Market, Basic, and News—to generate data-driven game forecasts. This ongoing project is evolving into a mobile application that integrates additional agents and advanced analytics, aiming to deliver highly accurate predictions and actionable insights for NFL games.",
     stack: [
-      // {
-      //   id: "icon-1",
-      //   icon: SiReact,
-      //   name: "React",
-      // },
-      // {
-      //   id: "icon-3",
-      //   icon: SiWeb3Dotjs,
-      //   name: "Web3.js",
-      // },
-      // {
-      //   id: "icon-4",
-      //   icon: SiSolidity,
-      //   name: "Solidity",
-      // },
-      // {
-      //   id: "icon-5",
-      //   icon: FaHardHat,
-      //   name: "HardHat",
-      // },
-      // {
-      //   id: "icon-6",
-      //   icon: SiIpfs,
-      //   name: "IPFS",
-      // },
-      // {
-      //   id: "icon-7",
-      //   icon: SiArduino,
-      //   name: "Arduino",
-      // },
-      // {
-      //   id: "icon-8",
-      //   icon: IoIosNotificationsOutline,
-      //   name: "Push Protocol",
-      // },
+      {
+        id: "icon-1",
+        icon: SiReact,
+        name: "React",
+      },
+      {
+        id: "icon-2",
+        icon: SiPython,
+        name: "Web3.js",
+      },
+      {
+        id: "icon-3",
+        icon: SiDocker,
+        name: "Docker",
+      },
+      {
+        id: "icon-4",
+        icon: SiFastapi,
+        name: "FastAPI",
+      },
+      {
+        id: "icon-5",
+        icon: SiSqlite,
+        name: "SQL-Lite",
+      },
+      {
+        id: "icon-6",
+        icon: SiRailway,
+        name: "Railway",
+      },
     ],
   },
   {
