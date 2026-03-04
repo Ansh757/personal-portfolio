@@ -57,6 +57,11 @@ import {
   SiFastapi,
   SiSqlite,
   SiRailway,
+  SiSpringboot,
+  SiAmazon,
+  SiPostgresql,
+  SiAmazonwebservices,
+  SiAngular,
 } from "react-icons/si";
 
 
@@ -236,6 +241,11 @@ export const skills = [
         name: "Python",
       },
       {
+        id: "pl-4",
+        icon: DiJava,
+        name: "Java",
+      },
+      {
         id: "pl-2",
         icon: SiCplusplus,
         name: "C++",
@@ -246,19 +256,14 @@ export const skills = [
         name: "C",
       },
       {
-        id: "pl-4",
-        icon: DiJava,
-        name: "Java",
+        id: "pl-9",
+        icon: SiJavascript,
+        name: "JavaScript",
       },
       {
         id: "pl-5",
         icon: DiSqllite,
         name: "SQL",
-      },
-      {
-        id: "pl-6",
-        icon: FaDatabase,
-        name: "R",
       },
       {
         id: "pl-7",
@@ -269,16 +274,6 @@ export const skills = [
         id: "pl-8",
         icon: DiCss3,
         name: "CSS",
-      },
-      {
-        id: "pl-9",
-        icon: SiJavascript,
-        name: "JavaScript",
-      },
-      {
-        id: "pl-10",
-        icon: SiAssemblyscript,
-        name: "Assembly",
       },
     ],
   },
@@ -298,37 +293,32 @@ export const skills = [
       {
         id: "f-3",
         icon: SiNodedotjs,
-        name: "NodeJS",
+        name: "Node.js",
       },
       {
         id: "f-4",
-        icon: SiReact,
-        name: "ReactJS",
+        icon: SiSpringboot,
+        name:"Spring Boot"
       },
       {
         id: "f-5",
+        icon: SiReact,
+        name: "React",
+      },
+      {
+        id: "f-6",
+        icon: SiAngular,
+        name: "Angular",
+      },
+      {
+        id: "f-6",
         icon: SiBootstrap,
         name: "Bootstrap",
       },
       {
-        id: "f-6",
-        icon: SiTailwindcss,
-        name: "Tailwind CSS",
-      },
-      {
         id: "f-7",
-        icon: SiJquery,
-        name: "jQuery",
-      },
-      {
-        id: "f-8",
-        icon: SiReactrouter,
-        name: "React Router",
-      },
-      {
-        id: "f-9",
-        icon: SiAxios,
-        name: "Axios",
+        icon: SiTailwindcss,
+        name: "Tailwind",
       },
     ],
   },
@@ -336,7 +326,7 @@ export const skills = [
     title: "Tools",
     items: [
       {
-        id: "t-1",
+        id: "t-0",
         icon: SiGooglecloud,
         name: "Google Cloud",
       },
@@ -347,43 +337,48 @@ export const skills = [
       },
       {
         id: "t-2",
+        icon: SiAmazonwebservices,
+        name: "AWS",
+      },
+      {
+        id: "t-3",
         icon: SiMysql,
         name: "MySQL",
       },
       {
-        id: "t-3",
-        icon: SiPostman,
-        name: "Postman",
+        id: "t-4",
+        icon: SiPostgresql,
+        name: "PostgreSQL",
       },
       {
-        id: "t-4",
-        icon: BiLogoVisualStudio,
-        name: "VS Code",
+        id: "t-9",
+        icon: SiFirebase,
+        name: "Firebase",
       },
       {
         id: "t-5",
+        icon: SiDocker,
+        name: "Docker",
+      },
+      {
+        id: "t-6",
         icon: SiGit,
         name: "Git",
       },
       {
-        id: "t-6",
+        id: "t-7",
         icon: AiFillGithub,
         name: "GitHub",
       },
       {
-        id: "t-7",
+        id: "t-8",
         icon: FaTerminal,
         name: "Shell Scripts",
       },
       {
-        id: "t-8",
+        id: "t-10",
         icon: SiNetlify,
         name: "Netlify",
-      },
-      {
-        id: "t-9",
-        icon: SiVite,
-        name: "ViteJS",
       },
     ],
   },

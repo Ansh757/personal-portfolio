@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 export const SkillIcon = ({ icon, name }) => {
   return (
     <div className="flex flex-col">
-      <span className="text-white text-[30px] hover:text-teal-200">
+      <span className="text-white text-[30px] hover:text-gold-200">
         {React.createElement(icon)}
       </span>
       <p className="font-poppins text-dimWhite text-[12px] mt-2">{name}</p>
